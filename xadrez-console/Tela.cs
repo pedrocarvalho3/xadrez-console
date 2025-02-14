@@ -1,23 +1,24 @@
 ﻿using tabuleiro;
+using xadrez;
 
 namespace xadrez_console
 {
     class Tela
     {
-        public static void imprimirTabuleiro(Tabuleiro tab)
+        public static void ImprimirTabuleiro(Tabuleiro tab)
         {
-            for (int i = 0; i < tab.linhas; i++)
+            for (int i = 0; i < tab.Linhas; i++)
             {
                 Console.Write(8 - i + " ");
-                for (int j = 0; j < tab.colunas; j++)
+                for (int j = 0; j < tab.Colunas; j++)
                 {
-                    if (tab.peca(i, j) == null)
+                    if (tab.Peca(i, j) == null)
                     {
                         Console.Write("- ");
                     }
                     else 
                     {
-                        Tela.imprimirPeca(tab.peca(i, j));
+                        Tela.ImprimirPeca(tab.Peca(i, j));
                         Console.Write(" ");
                     }
                 }
@@ -26,9 +27,17 @@ namespace xadrez_console
             Console.WriteLine("  a b c d e f g h");
         }
 
-        public static void imprimirPeca(Peca peca)
+        public static PosicaoXadrez LerPosicaoXadrez()
         {
-            if (peca.cor == Cor.Branca)
+            string s = Console.ReadLine();
+            char coluna = s[0];
+            int linha = int.Parse(s[1] + "");
+            return new PosicaoXadrez(coluna, linha);
+        }
+
+        public static void ImprimirPeca(Peca peca)
+        {
+            if (peca.Cor == Cor.Branca)
             {
                 Console.Write(peca);
             }
