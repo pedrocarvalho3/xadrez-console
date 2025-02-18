@@ -1,72 +1,119 @@
 ﻿using tabuleiro;
+
 namespace xadrez
 {
+
     class Peao : Peca
     {
-        public Peao(Tabuleiro tab, Cor cor) : base(tab, cor) { }
+
+        private PartidaDeXadrez partida;
+
+        public Peao(Tabuleiro tab, Cor cor, PartidaDeXadrez partida) : base(tab, cor)
+        {
+            this.partida = partida;
+        }
+
         public override string ToString()
         {
             return "P";
         }
-        private bool ExisteInimigo(Posicao pos)
+
+        private bool existeInimigo(Posicao pos)
         {
-            Peca p = Tab.Peca(pos);
-            return p != null && p.Cor != Cor;
+            Peca p = tab.peca(pos);
+            return p != null && p.cor != cor;
         }
-        private bool Livre(Posicao pos)
+
+        private bool livre(Posicao pos)
         {
-            return Tab.Peca(pos) == null;
+            return tab.peca(pos) == null;
         }
-        public override bool[,] MovimentosPossiveis()
+
+        public override bool[,] movimentosPossiveis()
         {
-            bool[,] mat = new bool[Tab.Linhas, Tab.Colunas];
+            bool[,] mat = new bool[tab.linhas, tab.colunas];
+
             Posicao pos = new Posicao(0, 0);
-            if (Cor == Cor.Branca)
+
+            if (cor == Cor.Branca)
             {
-                pos.DefinirValores(Posicao.Linha - 1, Posicao.Coluna);
-                if (Tab.PosicaoValida(pos) && Livre(pos))
+                pos.definirValores(posicao.linha - 1, posicao.coluna);
+                if (tab.posicaoValida(pos) && livre(pos))
                 {
-                    mat[pos.Linha, pos.Coluna] = true;
+                    mat[pos.linha, pos.coluna] = true;
                 }
-                pos.DefinirValores(pos.Linha - 2, pos.Coluna);
-                if (Tab.PosicaoValida(pos) && Livre(pos) && QtdMovimentos == 0)
+                pos.definirValores(posicao.linha - 2, posicao.coluna);
+                Posicao p2 = new Posicao(posicao.linha - 1, posicao.coluna);
+                if (tab.posicaoValida(p2) && livre(p2) && tab.posicaoValida(pos) && livre(pos) && qteMovimentos == 0)
                 {
-                    mat[pos.Linha, pos.Coluna] = true;
+                    mat[pos.linha, pos.coluna] = true;
                 }
-                pos.DefinirValores(pos.Linha - 1, pos.Coluna - 1);
-                if (Tab.PosicaoValida(pos) && ExisteInimigo(pos))
+                pos.definirValores(posicao.linha - 1, posicao.coluna - 1);
+                if (tab.posicaoValida(pos) && existeInimigo(pos))
                 {
-                    mat[pos.Linha, pos.Coluna] = true;
+                    mat[pos.linha, pos.coluna] = true;
                 }
-                pos.DefinirValores(pos.Linha - 1, pos.Coluna + 1);
-                if (Tab.PosicaoValida(pos) && ExisteInimigo(pos))
+                pos.definirValores(posicao.linha - 1, posicao.coluna + 1);
+                if (tab.posicaoValida(pos) && existeInimigo(pos))
                 {
-                    mat[pos.Linha, pos.Coluna] = true;
+                    mat[pos.linha, pos.coluna] = true;
+                }
+
+                // #jogadaespecial en passant
+                if (posicao.linha == 3)
+                {
+                    Posicao esquerda = new Posicao(posicao.linha, posicao.coluna - 1);
+                    if (tab.posicaoValida(esquerda) && existeInimigo(esquerda) && tab.peca(esquerda) == partida.vulneravelEnPassant)
+                    {
+                        mat[esquerda.linha - 1, esquerda.coluna] = true;
+                    }
+                    Posicao direita = new Posicao(posicao.linha, posicao.coluna + 1);
+                    if (tab.posicaoValida(direita) && existeInimigo(direita) && tab.peca(direita) == partida.vulneravelEnPassant)
+                    {
+                        mat[direita.linha - 1, direita.coluna] = true;
+                    }
                 }
             }
             else
             {
-                pos.DefinirValores(Posicao.Linha + 1, Posicao.Coluna);
-                if (Tab.PosicaoValida(pos) && Livre(pos))
+                pos.definirValores(posicao.linha + 1, posicao.coluna);
+                if (tab.posicaoValida(pos) && livre(pos))
                 {
-                    mat[pos.Linha, pos.Coluna] = true;
+                    mat[pos.linha, pos.coluna] = true;
                 }
-                pos.DefinirValores(pos.Linha + 2, pos.Coluna);
-                if (Tab.PosicaoValida(pos) && Livre(pos) && QtdMovimentos == 0)
+                pos.definirValores(posicao.linha + 2, posicao.coluna);
+                Posicao p2 = new Posicao(posicao.linha + 1, posicao.coluna);
+                if (tab.posicaoValida(p2) && livre(p2) && tab.posicaoValida(pos) && livre(pos) && qteMovimentos == 0)
                 {
-                    mat[pos.Linha, pos.Coluna] = true;
+                    mat[pos.linha, pos.coluna] = true;
                 }
-                pos.DefinirValores(pos.Linha + 1, pos.Coluna + 1);
-                if (Tab.PosicaoValida(pos) && ExisteInimigo(pos))
+                pos.definirValores(posicao.linha + 1, posicao.coluna - 1);
+                if (tab.posicaoValida(pos) && existeInimigo(pos))
                 {
-                    mat[pos.Linha, pos.Coluna] = true;
+                    mat[pos.linha, pos.coluna] = true;
                 }
-                pos.DefinirValores(pos.Linha + 1, pos.Coluna - 1);
-                if (Tab.PosicaoValida(pos) && ExisteInimigo(pos))
+                pos.definirValores(posicao.linha + 1, posicao.coluna + 1);
+                if (tab.posicaoValida(pos) && existeInimigo(pos))
                 {
-                    mat[pos.Linha, pos.Coluna] = true;
+                    mat[pos.linha, pos.coluna] = true;
+                }
+
+                // #jogadaespecial en passant
+                if (posicao.linha == 4)
+                {
+                    Posicao esquerda = new Posicao(posicao.linha, posicao.coluna - 1);
+                    if (tab.posicaoValida(esquerda) && existeInimigo(esquerda) && tab.peca(esquerda) == partida.vulneravelEnPassant)
+                    {
+                        mat[esquerda.linha + 1, esquerda.coluna] = true;
+                    }
+                    Posicao direita = new Posicao(posicao.linha, posicao.coluna + 1);
+                    if (tab.posicaoValida(direita) && existeInimigo(direita) && tab.peca(direita) == partida.vulneravelEnPassant)
+                    {
+                        mat[direita.linha + 1, direita.coluna] = true;
+                    }
                 }
             }
+
             return mat;
         }
     }
